@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
-par_number = "+79206369642"
-print(par_number[1:11])
-print(par_number[0:11].isdigit())
+import threading
+import sys
+
+
+class CountdownTask:
+    def __init__(self):
+    self._running = True
+
+def terminate(self):
+    self._running = False
+
+def run(self, n):
+    while self._running and n > 0:
+        print('T-minus', n)
+        n -= 1
+        time.sleep(5)
+
+c = CountdownTask()
+t = Thread(target=c.run, args=(10,))
+t.start()
+...
+# Сигнал прекращения
+c.terminate()

