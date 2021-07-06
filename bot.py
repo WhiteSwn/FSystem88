@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 # Import modules
-import start_attack, help, run_bot
+import start_attack
+import help
+import run_bot
 import telebot
 
 bot = telebot.TeleBot("1884845165:AAE51LVnKOW2_tmgXyCpsC1nu-a-JXIYBuc")
-#################################################################################################################
-help = help.h()
-########################################################################################################################
+
+"""###################################################################################################################
 #Подключаем прокси
 #	proxy.proxy()
-###################################################################################################################
-## Обработка команд
+################################################################################################################## """
+
 try:
-	@bot.message_handler(commands=['Start'])
+	@bot.message_handler(commands=['Start'])  # Обработка команд
 	def send_start(message):
 		print('Подключился новый клиент')
 		bot.send_message(message.chat.id, "Введите номер жертвы в формате - \"+7**********\"")
@@ -20,31 +21,34 @@ try:
 
 	@bot.message_handler(commands=['Help'])
 	def send_help(message):
-		bot.send_message(message.chat.id, help)
+		bot.send_message(message.chat.id, help.h())
 
 
-	@bot.message_handler(commands=['Attack']) # Запускает impulse по команде
+	@bot.message_handler(commands=['Attack'])  # Запускает impulse по команде
 	def send_attack(message):
-		global result, answer
+		global answer
 		bot.send_message(message.chat.id, "Атака началась")
-		result = start_attack.sa(par_time, par_threads, par_number) # подключаем модуль с функцией, которая запускает impulse
+		result = start_attack.sa(par_time, par_threads, par_number)  # подключаем модуль с функцией, которая запускает impulse
 		# Проверяем  выполнение атаки
 		if result != 0:
 			answer = "Атака завершена. \nЧто бы выбрать другую цель введите \n/Start"
 		bot.send_message(message.chat.id, answer)
 
 # Обработка сообщений
-	@bot.message_handler(content_types =['text'])
+
+	@bot.message_handler(content_types=['text'])
 	def start(message):
 		global message_id
 		message_id = message.chat.id
 		if message.text == "/Restart":
 			bot.register_next_step_handler(message, send_start)
-		elif message.text == '/reg':   #Приветствие при регистрации
+		elif message.text == '/reg':
 			bot.send_message(message.chat.id, "Приветствую. Для получения справки введите команду \n/Help")
 		else:
 			bot.send_message(message.chat.id, "Неизвестная команда, введите команду \n/Help")
+
 # Получение парамметров необходимых для запуска impulse
+
 	def send_number(message):
 		global par_number, message_id
 		message_id = message.chat.id
@@ -59,7 +63,7 @@ try:
 			bot.register_next_step_handler(message, send_number)
 
 	def send_time(message):
-		global par_number, par_time, messange_id
+		global par_number, par_time, message_id
 		message_id = message.chat.id
 		par_time = message.text
 		if message.text == "/Restart":
@@ -88,11 +92,12 @@ try:
 	bot.polling( none_stop = True)
 
 # Обрвботка исключений
+
 except Exception:
 	global message_id
 	print('Возникла ошибка, бот перезапущен')
 	bot.send_message(message_id, "Вы ввели неверные параметры и возникла ошибка, бот был перезапущен. \nДля начала работы введите /Start")
-	res_start = run_bot.start()
+	run_bot.start()
 
 ##################################################################################################
 
