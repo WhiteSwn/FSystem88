@@ -51,7 +51,7 @@ try:
 		par_number = message.text
 		if message.text == "/Restart":
 			bot.register_next_step_handler(message, send_start)
-		elif par_number[0:2] == '+7' and len(par_number) == 12: #Проверка на правильность ввода номера
+		elif par_number[0:2] == '+7' and len(par_number) == 12 and par_number[1:12].isdigit() == True: #Проверка на правильность ввода номера
 			bot.send_message(message.chat.id, "Номер жертвы - " + par_number + "\nВведите продолжительность атаки в секундах \ntime = ")
 			bot.register_next_step_handler(message, send_time)
 		else:
@@ -64,9 +64,10 @@ try:
 		par_time = message.text
 		if message.text == "/Restart":
 			bot.register_next_step_handler(message, send_start)
-		elif 0 < int(par_time) < 100000: #Время в пределах 24х часов
-			bot.send_message(message.chat.id, "Номер жертвы - "+ par_number + "\ntime = " + par_time + "\nВведите количество кругов атаки \nthreads = ")
-			bot.register_next_step_handler(message, send_threads)
+		elif par_time.isdigit() == True: #Время в пределах 24х часов
+			if 0 <= int(par_time) <= 100000:
+				bot.send_message(message.chat.id, "Номер жертвы - "+ par_number + "\ntime = " + par_time + "\nВведите количество кругов атаки \nthreads = ")
+				bot.register_next_step_handler(message, send_threads)
 		else:
 			bot.send_message(message.chat.id, "Неверно введено время")
 			bot.register_next_step_handler(message, send_time)
@@ -77,9 +78,10 @@ try:
 		par_threads = message.text
 		if message.text == "/Restart":
 			bot.register_next_step_handler(message, send_start)
-		elif 1 <= int(par_threads) < 200:
-			bot.send_message(message.chat.id, "Номер жертвы - "+ par_number + "\ntime = " + par_time + "\nthreads = " + par_threads + "\nЧтобы начать атаку введите \n/Attack")
-			print("Номер жертвы - "+ par_number + "\ntime = " + par_time + "\nthreads = " + par_threads)
+		elif par_threads.isdigit() == True:
+			if 1 <= int(par_threads) < 200:
+				bot.send_message(message.chat.id, "Номер жертвы - "+ par_number + "\ntime = " + par_time + "\nthreads = " + par_threads + "\nЧтобы начать атаку введите \n/Attack")
+				print("Номер жертвы - "+ par_number + "\ntime = " + par_time + "\nthreads = " + par_threads)
 		else:
 			bot.send_message(message.chat.id, "Неверное число кругов")
 			bot.register_next_step_handler(message, send_threads)
